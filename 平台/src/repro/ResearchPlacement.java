@@ -12,12 +12,16 @@ public final class ResearchPlacement {
         public final int[] host;
         public final double[] history;
         public final long nanos;
+        public final long evaluations;
         public final int[][] mappingHistory;
         Answer(int[] host, double[] history, long nanos) {
             this(host,history,nanos,null);
         }
         Answer(int[] host,double[] history,long nanos,int[][] mappings) {
-            this.host=host;this.history=history;this.nanos=nanos;this.mappingHistory=mappings;
+            this(host,history,nanos,mappings,-1);
+        }
+        Answer(int[] host,double[] history,long nanos,int[][] mappings,long evaluations) {
+            this.host=host;this.history=history;this.nanos=nanos;this.mappingHistory=mappings;this.evaluations=evaluations;
         }
     }
     private ResearchPlacement() { }
@@ -59,6 +63,12 @@ public final class ResearchPlacement {
     }
     public static Answer solve(String method, double[] d, int h, int racks, SupplyPowerModel ups,
             long seed, int generations, double cap, boolean commonSeed) {
+        return solve(method,d,h,racks,ups,seed,generations,cap,commonSeed,Long.MAX_VALUE,Long.MAX_VALUE);
+    }
+    /** Budgets stop at full population checkpoints; nanos include BFD and initialization. */
+    public static Answer solve(String method,double[] d,int h,int racks,SupplyPowerModel ups,
+            long seed,int generations,double cap,boolean commonSeed,long maxEvaluations,long maxNanos) {
+        if(maxEvaluations<1||maxNanos<1)throw new IllegalArgumentException("Positive budgets required");
         long start = System.nanoTime(); Random rng = new Random(seed);
         int limit=(int)Math.min(ups.s.hostRam/ups.s.vmRam,Math.min(ups.s.bandwidth/1000,ups.s.storage/1000));
         if (d.length == 0 || h <= 0 || racks <= 0 || h % racks != 0 || generations < 0 || !(cap > 0 && cap <= 1))
@@ -67,9 +77,11 @@ public final class ResearchPlacement {
             throw new IllegalArgumentException("VM demand outside host capacity: " + v);
         if (method.equals("FFD") || method.equals("BFD")) {
             int[] p = greedy(d, h, method.equals("BFD"), cap,limit);
-            return new Answer(p, new double[]{ups.powers(d,p)[2]}, System.nanoTime()-start);
+            return new Answer(p, new double[]{ups.powers(d,p)[2]}, System.nanoTime()-start,null,1);
         }
         if (!Arrays.asList(METHODS).contains(method)) throw new IllegalArgumentException("Unknown method " + method);
+        if(maxEvaluations<ups.s.population)throw new IllegalArgumentException("Evaluation budget must cover the initial population");
+        generations=(int)Math.min((long)generations,maxEvaluations/ups.s.population-1);
         boolean twoStep = method.equals("BFD-GA"), grouping = method.equals("GGA");
         String operator=ups.s.values.getProperty("research.genetic.operators","legacy");
         if(!operator.equals("legacy")&&!operator.equals("aligned_feasible"))throw new IllegalArgumentException("Unknown genetic operators: "+operator);
@@ -96,7 +108,9 @@ public final class ResearchPlacement {
         if (commonSeed && !twoStep) pop[0] = base.clone();
         double[] history = new double[generations+1]; int[] champion = null;
         int[][] mappings=trace?new int[generations+1][]:null;
+        int lastGeneration=0;
         for (int gen = 0; gen <= generations; gen++) {
+            lastGeneration=gen;
             double[] scores = new double[ups.s.population]; int best = 0;
             for (int k = 0; k < ups.s.population; k++) {
                 int[] p = twoStep ? racksToHosts(base,groupIds,pop[k],h,racks) : pop[k];
@@ -108,7 +122,7 @@ public final class ResearchPlacement {
             if(!Double.isFinite(scores[best])) throw new IllegalArgumentException("No feasible UPS candidate "+method);
             history[gen] = scores[best]; champion = pop[best].clone();
             if(trace)mappings[gen]=twoStep?racksToHosts(base,groupIds,champion,h,racks):champion.clone();
-            if (gen == generations) break;
+            if (gen == generations || System.nanoTime()-start>=maxNanos) break;
             int[][] next = new int[ups.s.population][]; next[0] = champion;
             for (int k = 1; k < ups.s.population; k++) {
                 int[] a = pop[roulette(scores,rng)], b = pop[roulette(scores,rng)]; int[] child = a.clone();
@@ -137,7 +151,8 @@ public final class ResearchPlacement {
         }
         int[] result = twoStep ? racksToHosts(base,groupIds,champion,h,racks) : champion;
         ups.powers(d,result);
-        return new Answer(result, history, System.nanoTime()-start,mappings);
+        return new Answer(result, Arrays.copyOf(history,lastGeneration+1), System.nanoTime()-start,
+                mappings==null?null:Arrays.copyOf(mappings,lastGeneration+1),(long)ups.s.population*(lastGeneration+1));
     }
     /** Explicit PEA-FF reconstruction: rank rack marginal supply cost, then first-fit within rack. */
     public static int[] peaFirstFit(double[] d,SupplyPowerModel model,double cap) {

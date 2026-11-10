@@ -9,3 +9,4 @@ src/repro/ResearchPlacement.java
 src/repro/ResearchPolicy.java
 src/repro/ResearchRun.java
 src/repro/PlacementOperators.java
+src/repro/ResearchBudgetBenchmark.java
