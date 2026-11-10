@@ -1,4 +1,5 @@
 """Check original archive bytes, complete source classification and V1 doc links."""
+import argparse
 import csv
 import hashlib
 import json
@@ -15,10 +16,15 @@ ALLOWED = {
     "平台/run_research_platform.ps1", "平台/src/repro/ResearchPlacement.java",
     "平台/src/repro/ResearchExperiments.java", "平台/tools/package_ga_fix_v10.py",
     "平台/research_platform/config/default.properties",
+    "平台/tools/research_platform_audit.py",
+    "平台/src/repro/ResearchFigureBenchmarkV10.java",
 }
 
 
 def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument("--local-history",action="store_true",help="Also check external original data and local maintenance runs")
+    args=parser.parse_args()
     tree = subprocess.check_output(["git", "ls-tree", "-rz", BASELINE], cwd=PROJECT)
     protected = 0
     for record in tree.split(b"\0"):
@@ -49,20 +55,21 @@ def main():
         assert "v10_GA与规模实验口径修正\\平台" not in text, "Stale command path"
         for link in re.findall(r"\]\(([^)]+)\)", text):
             assert (doc.parent / link).exists(), f"Broken documentation link: {doc}: {link}"
-    index = json.loads((PROJECT / "历史数据索引.json").read_text(encoding="utf-8"))
-    original = Path(index["original_matrix"]["path"])
-    for name, item in index["original_matrix"]["key_files"].items():
-        assert hashlib.sha256((original / name).read_bytes()).hexdigest() == item["sha256"]
-    metrics = ["host_model_kwh", "hardware_kwh", "server_kwh", "ups_kwh", "total_kwh", "started",
-               "finished", "blocked", "requested_mi", "delivered_mi", "migration_seconds", "cpu_error", "vm_count", "native_calls"]
-    for current, old in [("maintenance_v1_ga_001", "smoke_ga_v10"),
-                         ("maintenance_v1_bfdga_001", "learning_20261015_110124_887")]:
-        def summary(name):
-            with (platform / "research_platform/runs" / name / "summary.csv").open(encoding="utf-8-sig", newline="") as stream:
-                return list(csv.DictReader(stream))[0]
-        now, before = summary(current), summary(old)
-        assert all(now[k] == before[k] for k in metrics), "Simulation metrics changed: " + current
-    print(f"PASS {protected} original files byte-identical; all {len(classified)} sources classified; docs, defaults, original data index and GA/BFD-GA metrics verified")
+    if args.local_history:
+        index = json.loads((PROJECT / "历史数据索引.json").read_text(encoding="utf-8"))
+        original = Path(index["original_matrix"]["path"])
+        for name, item in index["original_matrix"]["key_files"].items():
+            assert hashlib.sha256((original / name).read_bytes()).hexdigest() == item["sha256"]
+        metrics = ["host_model_kwh", "hardware_kwh", "server_kwh", "ups_kwh", "total_kwh", "started",
+                   "finished", "blocked", "requested_mi", "delivered_mi", "migration_seconds", "cpu_error", "vm_count", "native_calls"]
+        for current, old in [("maintenance_v1_ga_001", "smoke_ga_v10"),
+                             ("maintenance_v1_bfdga_001", "learning_20261015_110124_887")]:
+            def summary(name):
+                with (platform / "research_platform/runs" / name / "summary.csv").open(encoding="utf-8-sig", newline="") as stream:
+                    return list(csv.DictReader(stream))[0]
+            now, before = summary(current), summary(old)
+            assert all(now[k] == before[k] for k in metrics), "Simulation metrics changed: " + current
+    print(f"PASS {protected} original files byte-identical; all {len(classified)} sources classified; docs and defaults verified; local history checked only with --local-history")
 
 
 if __name__ == "__main__":
