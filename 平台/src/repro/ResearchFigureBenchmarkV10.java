@@ -21,6 +21,7 @@ public final class ResearchFigureBenchmarkV10 {
         Path run=Paths.get(args[0]).toAbsolutePath().normalize(),out=Paths.get(args[1]).toAbsolutePath().normalize();
         if(!Files.isRegularFile(run.resolve("completed.txt")))throw new IllegalArgumentException("Matrix incomplete");
         if(Files.exists(out))throw new IllegalArgumentException("Output already exists: "+out);
+        ResearchExperiments.validateMatrix(new ResearchConfig(run.resolve("benchmark_config.properties")));
         ResearchConfig base=new ResearchConfig(run.resolve("benchmark_config.properties"))
             .with("research.genetic.operators","aligned_feasible").with("research.initialization","random_hosts")
             .with("research.rack.operators","aligned_gene")

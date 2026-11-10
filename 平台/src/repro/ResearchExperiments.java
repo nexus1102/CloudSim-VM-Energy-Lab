@@ -62,6 +62,16 @@ public final class ResearchExperiments {
         }
         base.save(root.resolve("benchmark_config.properties"));
     }
+    /** This entry point reproduces a fixed paper matrix, not a general sweep. */
+    public static void validateMatrix(ResearchConfig c) {
+        PaperSettings s=c.settings;
+        if(s.step!=300||s.hosts!=100||s.racks!=5||s.generations!=60||Math.abs(s.packingCap-.9)>1e-12
+                ||Math.abs(s.idle-218.3)>1e-12||Math.abs(s.max-350)>1e-12
+                ||Math.abs(s.hostMips-2500)>1e-12||s.hostRam!=65536||s.vmRam!=512
+                ||s.bandwidth!=1000000||s.storage!=1000000
+                ||!c.initialization.equals("feasible_packing"))
+            throw new IllegalArgumentException("Fixed paper Matrix requires 100 Hosts, 5 racks, 60 generations, cap .9, original hardware and feasible_packing; use Single for custom configurations.");
+    }
     private static void matrix(PrintWriter w,Path root,ResearchConfig base)throws Exception {
         Path trace=snapshot(Paths.get(base.original.getProperty("trace.path")),root);
         for(String topology:TOPO)for(String cap:new String[]{"0.9","1.0"})for(String control:new String[]{"threshold","consolidation"}) {
@@ -69,8 +79,8 @@ public final class ResearchExperiments {
             for(String method:ResearchPlacement.METHODS)for(long seed:SEEDS)
                 execute(w,root,topology+"_cap"+cap+"_"+control+"_"+method+"_"+seed,"dynamic",trace,c,method,seed,null,seed==101);
         }
-        for(String extension:new String[]{"feasible_init","total_goal","ups_destination","hardware20","standby20"}) {
-            ResearchConfig c=extension.equals("feasible_init")?base.with("research.initialization","feasible_packing"):
+        for(String extension:new String[]{"random_init","total_goal","ups_destination","hardware20","standby20"}) {
+            ResearchConfig c=extension.equals("random_init")?base.with("research.initialization","random_hosts"):
                     extension.equals("total_goal")?base.with("genetic.objective","total"):
                     extension.equals("ups_destination")?base.with("migration.destination","ups_min_power"):
                     extension.equals("hardware20")?base.with("migration.incremental.w.per.endpoint","20"):base.with("ups.standby.loss.w","20");
@@ -100,6 +110,7 @@ public final class ResearchExperiments {
         String mode=options.getOrDefault("--mode","single");if(!mode.equals("single")&&!mode.equals("matrix"))throw new IllegalArgumentException("Mode must be single or matrix");
         if(!options.containsKey("--output"))throw new IllegalArgumentException("Explicit new --output directory required");
         ResearchConfig config=new ResearchConfig(Paths.get(options.getOrDefault("--config","research_platform/config/default.properties")));
+        if(mode.equals("matrix")){validateMatrix(config);config=config.with("experiment.schema","2");}
         Path root=Paths.get(options.get("--output")).toAbsolutePath().normalize();
         if(Files.exists(root))throw new IllegalArgumentException("Output already exists; choose a new run directory: "+root);
         if(mode.equals("matrix")&&(options.containsKey("--mapping")||options.containsKey("--method")))throw new IllegalArgumentException("Method/mapping options apply only to single runs");

@@ -62,6 +62,10 @@ def detailed_racks(prefix,c,s,events):
 
 def check_case(run,row):
     prefix=run/'cases'/row['prefix'];c=settings(Path(str(prefix)+'_research.properties'));s=settings(Path(str(prefix)+'_settings.properties'))
+    schema=settings(run/'run_config.properties').get('experiment.schema','1')
+    if schema=='2' and row['kind']=='dynamic':
+        expected_init='random_hosts' if row['prefix'].startswith('random_init_') else 'feasible_packing'
+        if c.get('research.initialization')!=expected_init:raise AssertionError('Initialization control mismatch')
     raw_path=Path(row['raw_path']).resolve()
     if not raw_path.is_relative_to((run/'inputs').resolve()) or raw_path.suffix.lower()!='.csv':raise AssertionError('Trace must be frozen CSV under run inputs')
     raw=np.loadtxt(raw_path,delimiter=',',ndmin=2);types=np.resize([float(x) for x in s['vm.mips'].split(',')],raw.shape[0])
@@ -108,37 +112,7 @@ def check_case(run,row):
         close(host_j/int(s['step.seconds']),float(s['host.idle.w'])*np.count_nonzero(counts)+(float(s['host.max.w'])-float(s['host.idle.w']))*allocated,1e-4)
     return dict(check,hardware_kwh=hardware_j/3600000,host_model_kwh=host_j/3600000)
 
-def verify(run):
-    run=Path(run).resolve();report=run/'report';report.mkdir(exist_ok=True)
-    if not (run/'completed.txt').exists():raise AssertionError('Incomplete execution marker')
-    for item in rows(run/'provenance.csv'):
-        original=Path(item['path']);archive=item.get('archive_path')
-        if archive:target=run/archive
-        elif original.is_relative_to(run/'inputs'):target=original
-        else:target=run/'source_snapshot'/original.relative_to(ROOT)
-        if not target.resolve().is_relative_to(run) or sha(target)!=item['sha256']:raise AssertionError('Archived source/input hash mismatch: '+str(target))
-    data=[p for p in run.rglob('*') if p.is_file() and not p.is_relative_to(report)]
-    fingerprint={str(p.relative_to(run)):sha(p) for p in data};code_hash=sha(Path(__file__));parent_hash=sha(ROOT/'tools/paper_audit.py')
-    cache=report/'independent_checks.json';manifest=report/'audit_manifest.json'
-    if cache.exists() and manifest.exists():
-        old=json.loads(manifest.read_text(encoding='utf-8'))
-        if old==dict(files=fingerprint,audit_code=code_hash,parent_audit=parent_hash):
-            result=json.loads(cache.read_text(encoding='utf-8'))
-            if result['status']=='PASS':print('PASS unchanged run fingerprints; independently audited results reused',flush=True);return result
-    summary=list(rows(run/'summary.csv'));by_kind=defaultdict(list)
-    for row in summary:by_kind[row['kind']].append(row)
-    if 'dynamic' in by_kind:
-        expected={f'{t}_cap{cap}_{ctrl}_{m}_{seed}' for t in ['n_plus_1_standby','n_plus_1_shared','two_n'] for cap in ['0.9','1.0']
-                  for ctrl in ['threshold','consolidation'] for m in METHODS for seed in SEEDS}
-        expected|={f'{ext}_{m}_{seed}' for ext in ['feasible_init','total_goal','ups_destination','hardware20','standby20'] for m in METHODS for seed in SEEDS}
-        expected|={f'static_cap{cap}_{arch}_{level}_{m}_{seed}' for cap in ['0.9','1.0'] for arch in ['N+1AC','N+1DC','2NAC','2NDC']
-                   for level in range(10,71,10) for m in METHODS for seed in SEEDS};expected.add('platform_literal')
-        if len(summary)!=1096 or {z['prefix'] for z in summary}!=expected:raise AssertionError('Incomplete/duplicate matrix')
-    elif len(summary)!=1 or not summary[0]['kind']=='single':raise AssertionError('Unknown single/matrix structure')
-    checks=[]
-    for i,row in enumerate(summary):
-        checks.append(check_case(run,row))
-        if i%50==0:print(f'independent {i+1}/{len(summary)} {row["prefix"]}',flush=True)
+def verify_trajectories(run):
     trajectory_count=0
     if (run/'histories.csv').exists():
         history=defaultdict(list);placements=defaultdict(list)
@@ -164,7 +138,60 @@ def verify(run):
             close(score[-1],total if key[1]=='BFD-GA' or c['genetic.objective']=='total' else float(watts.sum()))
             if key[1]=='BFD-GA':same_groups(bfd(demand,100,.9,128),plan)
             trajectory_count+=1
+    return trajectory_count
+
+
+def require_matrix_artifacts(run):
+    marker = (run/'completed.txt').read_text(encoding='utf-8-sig')
+    if 'matrix' in marker:
+        required = ['summary.csv', 'provenance.csv', 'run_config.properties',
+                    'histories.csv', 'solver_placements.csv', 'benchmark_config.properties',
+                    'inputs/static_30.csv']
+        missing = [name for name in required if not (run/name).is_file()]
+        if missing:
+            raise AssertionError('Incomplete Matrix artifacts: ' + ', '.join(missing))
+
+
+def verify(run):
+    run=Path(run).resolve();report=run/'report';report.mkdir(exist_ok=True)
+    if not (run/'completed.txt').exists():raise AssertionError('Incomplete execution marker')
+    require_matrix_artifacts(run)
+    for item in rows(run/'provenance.csv'):
+        original=Path(item['path']);archive=item.get('archive_path')
+        if archive:target=run/archive
+        elif original.is_relative_to(run/'inputs'):target=original
+        else:target=run/'source_snapshot'/original.relative_to(ROOT)
+        if not target.resolve().is_relative_to(run) or sha(target)!=item['sha256']:raise AssertionError('Archived source/input hash mismatch: '+str(target))
+    data=[p for p in run.rglob('*') if p.is_file() and not p.is_relative_to(report)]
+    fingerprint={str(p.relative_to(run)):sha(p) for p in data};code_hash=sha(Path(__file__));parent_hash=sha(ROOT/'tools/paper_audit.py')
+    cache=report/'independent_checks.json';manifest=report/'audit_manifest.json'
+    if cache.exists() and manifest.exists():
+        old=json.loads(manifest.read_text(encoding='utf-8'))
+        if old==dict(files=fingerprint,audit_code=code_hash,parent_audit=parent_hash):
+            result=json.loads(cache.read_text(encoding='utf-8'))
+            if result['status']=='PASS':print('PASS unchanged run fingerprints; independently audited results reused',flush=True);return result
+    summary=list(rows(run/'summary.csv'));by_kind=defaultdict(list)
+    for row in summary:by_kind[row['kind']].append(row)
+    if 'dynamic' in by_kind:
+        require_matrix_artifacts_from_summary = ['histories.csv','solver_placements.csv','benchmark_config.properties']
+        for name in require_matrix_artifacts_from_summary:
+            if not (run/name).is_file():raise AssertionError('Incomplete Matrix artifacts: '+name)
+        schema=settings(run/'run_config.properties').get('experiment.schema','1')
+        init_extension='random_init' if schema=='2' else 'feasible_init'
+        expected={f'{t}_cap{cap}_{ctrl}_{m}_{seed}' for t in ['n_plus_1_standby','n_plus_1_shared','two_n'] for cap in ['0.9','1.0']
+                  for ctrl in ['threshold','consolidation'] for m in METHODS for seed in SEEDS}
+        expected|={f'{ext}_{m}_{seed}' for ext in [init_extension,'total_goal','ups_destination','hardware20','standby20'] for m in METHODS for seed in SEEDS}
+        expected|={f'static_cap{cap}_{arch}_{level}_{m}_{seed}' for cap in ['0.9','1.0'] for arch in ['N+1AC','N+1DC','2NAC','2NDC']
+                   for level in range(10,71,10) for m in METHODS for seed in SEEDS};expected.add('platform_literal')
+        if len(summary)!=1096 or {z['prefix'] for z in summary}!=expected:raise AssertionError('Incomplete/duplicate matrix')
+    elif len(summary)!=1 or not summary[0]['kind']=='single':raise AssertionError('Unknown single/matrix structure')
+    checks=[]
+    for i,row in enumerate(summary):
+        checks.append(check_case(run,row))
+        if i%50==0:print(f'independent {i+1}/{len(summary)} {row["prefix"]}',flush=True)
+    trajectory_count=verify_trajectories(run)
     result={'status':'PASS','cases':len(summary),'counts':{k:len(v) for k,v in by_kind.items()},'solver_trajectories':trajectory_count,
+            'coverage':{'simulation':'PASS','trajectories':'PASS' if trajectory_count else 'NOT_APPLICABLE','figures':'NOT_CHECKED'},
             'scope':'Independent module loss, real event lifecycle, hardware/UPS feedback, actual completed work, CPU/ownership/resource and initial BFD group checks','checks':checks}
     cache.write_text(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False),encoding='utf-8')
     manifest.write_text(json.dumps(dict(files=fingerprint,audit_code=code_hash,parent_audit=parent_hash),ensure_ascii=False,indent=2),encoding='utf-8')
