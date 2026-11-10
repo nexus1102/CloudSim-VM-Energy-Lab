@@ -1,0 +1,54 @@
+{
+  "project": "V1",
+  "historical_algorithm_version": "v10",
+  "checked_date": "2026-11-10",
+  "original_matrix": {
+    "path": "H:\\Company_project_study_PHD\\Reference\\复现结果\\research_platform\\runs\\ga_fix_v10_20261013",
+    "availability": "available",
+    "cases_directory_exists": true,
+    "case_files": 7844,
+    "key_files": {
+      "completed.txt": {
+        "exists": true,
+        "sha256": "cb2ee79acc535c1edffaa42fbbb77f9d48bd30405491e7720aed7e839b2d7812"
+      },
+      "summary.csv": {
+        "exists": true,
+        "sha256": "43767c68131287a44c4b5c6305d852755b7cc3c18e982f6323bf8bc5ea60add4"
+      },
+      "provenance.csv": {
+        "exists": true,
+        "sha256": "033d67a593ebd385afbf76c507dfc3e58d5c72f9936de493f71d9115b522dc08"
+      },
+      "run_config.properties": {
+        "exists": true,
+        "sha256": "23259dc3eabd829b9baab78b05c6ceff93be88ffc9b4e446e140708539745028"
+      },
+      "benchmark_config.properties": {
+        "exists": true,
+        "sha256": "2377c1f559e6d33796cd0051b0d52e1b26ea168add892ae47268c148793809c2"
+      }
+    },
+    "policy": "Read-only historical source; absolute production paths remain unchanged. Availability and key hashes do not constitute a fresh full audit."
+  },
+  "local_archives": [
+    {
+      "path": "结果",
+      "content": "Reports and full scale-study plans; not a complete raw CloudSim matrix."
+    },
+    {
+      "path": "平台/research_platform/runs/ga_fix_v09_20261013",
+      "content": "Summary baseline only; do not Verify."
+    },
+    {
+      "path": "平台/research_platform/runs/smoke_ga_v10",
+      "content": "Historical single run with production absolute paths; preserve bytes."
+    },
+    {
+      "path": "平台/research_platform/runs/learning_20261015_110124_887",
+      "content": "Historical single run with production absolute paths; preserve bytes."
+    }
+  ],
+  "new_runs": "平台/research_platform/runs/<new_name>",
+  "relocation_policy": "Register new locations in a new index revision; do not rewrite sealed provenance or reports. Re-run into a new directory for a new-location audit."
+}
