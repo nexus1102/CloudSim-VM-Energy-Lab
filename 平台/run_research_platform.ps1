@@ -7,11 +7,15 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 Set-Location -LiteralPath $PSScriptRoot
-$researchJava = 'H:\Company_project_study_PHD\SOFTWARE\01_JDK\jdk8u504-b01\bin\java.exe'
-if (-not (Test-Path -LiteralPath $researchJava)) { $researchJava = (Get-Command java -ErrorAction Stop).Source }
-$researchPython = Join-Path $env:USERPROFILE '.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
-if (-not (Test-Path -LiteralPath $researchPython)) { $researchPython = (Get-Command python -ErrorAction Stop).Source }
+. (Join-Path $PSScriptRoot 'runtime.ps1')
+$researchJava = (Get-ResearchJavaTools).Java
 if ($Mode -ne 'Test' -and -not $Output) { throw 'Explicit -Output is required; existing runs are never overwritten.' }
+if ($Mode -ne 'Test') {
+    $researchPython = Get-ResearchPython
+    if (-not (Test-Path -LiteralPath 'tools/research_platform_report.py' -PathType Leaf)) {
+        throw 'Independent audit/report program is missing: tools/research_platform_report.py'
+    }
+}
 & powershell -ExecutionPolicy Bypass -File build.ps1
 if ($LASTEXITCODE -ne 0) { throw 'Research platform compilation failed' }
 if ($Mode -eq 'Test' -or $Mode -eq 'Matrix') {

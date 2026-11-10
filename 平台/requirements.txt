@@ -1,0 +1,4 @@
+# Current audit and figure/report workflow. Python >=3.10; verified on Python 3.12.7.
+numpy==1.26.4
+matplotlib==3.9.2
+Pillow==10.4.0
