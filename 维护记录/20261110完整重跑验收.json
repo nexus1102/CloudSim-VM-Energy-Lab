@@ -1,0 +1,19 @@
+{
+  "source_commit": "747aa9ebb31c6fbf91fd3db76295a9467ee04df3",
+  "run": "H:\\Company_project_study_PHD\\SOFTWARE\\simulation\\V1\\平台\\research_platform\\runs\\maintenance_full_20261110_5f716595",
+  "status": "PASS",
+  "matrix_cases": 1096,
+  "main_trajectories": 27,
+  "scale_solves": 1296,
+  "scale_plans": 82458,
+  "identical_historical_cases": 1081,
+  "compared_metrics": 14,
+  "scale_history_identical": true,
+  "raw_data_uploaded": false,
+  "check_hashes": {
+    "report\\independent_checks.json": "60e8e4e586678970c39594906fff320a8bd21d9e7ac2863c2d2e3caacbf3b5ac",
+    "report\\figure_checks.json": "3b1e0085cf6f033d43195272966e99f17bcca237d5fc0d2bcb22d7aef22fe328",
+    "report\\figure_benchmark\\independent_checks.json": "12a7e00bdd6c54e71f6440f5cfa6f2a470a03f78135a93ac4b922d9c9f47f735",
+    "report\\rerun_comparison.json": "4f0d48c2b3a8306c245dee8e886120788b05202ac89e6b055d237b592ab4df7d"
+  }
+}
