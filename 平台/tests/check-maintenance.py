@@ -5,6 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+from urllib.parse import urlsplit
 import subprocess
 
 PROJECT = Path(__file__).resolve().parents[2]
@@ -55,7 +56,8 @@ def main():
         text = doc.read_text(encoding="utf-8-sig")
         assert "v10_GA与规模实验口径修正\\平台" not in text, "Stale command path"
         for link in re.findall(r"\]\(([^)]+)\)", text):
-            assert (doc.parent / link).exists(), f"Broken documentation link: {doc}: {link}"
+            if urlsplit(link).scheme in {'http','https','mailto'} or link.startswith('#'):continue
+            assert (doc.parent / link.split('#',1)[0]).exists(), f"Broken documentation link: {doc}: {link}"
     if args.local_history:
         index = json.loads((PROJECT / "历史数据索引.json").read_text(encoding="utf-8"))
         original = Path(index["original_matrix"]["path"])
