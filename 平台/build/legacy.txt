@@ -1,0 +1,14 @@
+# Explicit legacy source boundary; paths relative to platform.
+src/repro/CorrectedExperiments.java
+src/repro/EvidencePlacement.java
+src/repro/Experiments.java
+src/repro/InferenceExperiments.java
+src/repro/PaperExperiments.java
+src/repro/PaperPlacement.java
+src/repro/PaperRun.java
+src/repro/PowerEfficiencyAwarePolicy.java
+src/repro/PowerSupplyAwareDataCenter.java
+src/repro/PublicMigrationDestination.java
+src/repro/PublicMigrationExperiments.java
+src/repro/ResearchFigureBenchmark.java
+src/repro/ResearchFigureBenchmarkV09.java

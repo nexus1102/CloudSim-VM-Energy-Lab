@@ -1,0 +1,9 @@
+# Explicit shared source boundary; paths relative to platform.
+src/repro/PaperHost.java
+src/repro/PaperSettings.java
+src/repro/PaperTrace.java
+src/repro/SupplyPowerModel.java
+src/repro/Simulation.java
+src/repro/PowerModels.java
+src/repro/Placement.java
+src/repro/DynamicController.java

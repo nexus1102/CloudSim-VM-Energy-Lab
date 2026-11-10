@@ -1,0 +1,11 @@
+# Explicit current source boundary; paths relative to platform.
+src/repro/ResearchConfig.java
+src/repro/ResearchDatacenter.java
+src/repro/ResearchDestination.java
+src/repro/ResearchExampleController.java
+src/repro/ResearchExperiments.java
+src/repro/ResearchFigureBenchmarkV10.java
+src/repro/ResearchPlacement.java
+src/repro/ResearchPolicy.java
+src/repro/ResearchRun.java
+src/repro/PlacementOperators.java
