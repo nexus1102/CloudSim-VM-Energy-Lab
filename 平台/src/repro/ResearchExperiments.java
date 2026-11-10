@@ -24,9 +24,13 @@ public final class ResearchExperiments {
     }
     private static void provenance(Path root)throws Exception {
         try(PrintWriter hashes=writer(root,"provenance.csv","path,sha256,archive_path")) {
-            for(String dir:new String[]{"src/repro","lib"})try(DirectoryStream<Path> stream=Files.newDirectoryStream(Paths.get(dir))) {
+            for(String dir:new String[]{"src/repro","lib","build","tools"})try(DirectoryStream<Path> stream=Files.newDirectoryStream(Paths.get(dir))) {
                 for(Path p:stream)if(Files.isRegularFile(p)){Path frozen=root.resolve("source_snapshot").resolve(p);Files.createDirectories(frozen.getParent());Files.copy(p,frozen);
                     hashes.println(csv(p.toAbsolutePath().normalize().toString())+","+sha(frozen)+","+csv(root.relativize(frozen).toString()));}
+            }
+            for(String name:new String[]{"build.ps1","run_research_platform.ps1","runtime.ps1","requirements.txt","requirements-lock.txt"}) {
+                Path p=Paths.get(name),frozen=root.resolve("source_snapshot").resolve(p);Files.copy(p,frozen);
+                hashes.println(csv(p.toAbsolutePath().normalize().toString())+","+sha(frozen)+","+csv(root.relativize(frozen).toString()));
             }
             if(hashes.checkError())throw new IOException("Provenance snapshot write failed");
         }

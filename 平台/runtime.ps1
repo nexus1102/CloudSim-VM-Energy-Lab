@@ -3,8 +3,8 @@ function Get-ResearchJavaTools {
     $javaHome = $env:RESEARCH_JAVA_HOME
     if (-not $javaHome) { $javaHome = $env:JAVA_HOME }
     if ($javaHome) {
-        $java = Join-Path $javaHome 'bin/java.exe'
-        $javac = Join-Path $javaHome 'bin/javac.exe'
+        $java = [IO.Path]::Combine($javaHome, 'bin/java.exe')
+        $javac = [IO.Path]::Combine($javaHome, 'bin/javac.exe')
     } else {
         $compiler = Get-Command javac -ErrorAction SilentlyContinue
         if ($compiler) {

@@ -10,6 +10,9 @@ $classRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot 'bin'))
 if ((Get-Item -LiteralPath $classRoot).Attributes -band [IO.FileAttributes]::ReparsePoint) {
     throw 'Build output bin must not be a junction or symbolic link.'
 }
+if (Get-ChildItem -LiteralPath $classRoot -Force -Recurse | Where-Object {
+    $_.Attributes -band [IO.FileAttributes]::ReparsePoint
+}) { throw 'Build output bin must not contain junctions or symbolic links.' }
 Get-ChildItem -LiteralPath $classRoot -Filter '*.class' -File -Recurse | ForEach-Object {
     if (-not $_.FullName.StartsWith($classRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
         throw 'Class file escaped build output directory.'
