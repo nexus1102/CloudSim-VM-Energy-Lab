@@ -11,8 +11,8 @@ def write_csv(path,rows):
     if not rows:return
     with path.open('w',encoding='utf-8-sig',newline='') as f:
         w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
-def generate(directory):
-    run=Path(directory).resolve();audit=verify(run);out=run/'report'
+def generate(directory,force=False):
+    run=Path(directory).resolve();audit=verify(run,force=force);out=run/'report'
     with (run/'summary.csv').open(encoding='utf-8-sig',newline='') as f:rows=list(csv.DictReader(f))
     grouped=defaultdict(list)
     for row in rows:
@@ -87,4 +87,5 @@ def generate(directory):
     print('Report generated:',out/'结果报告.md')
 if __name__=='__main__':
     sys.stdout.reconfigure(encoding='utf-8');parser=argparse.ArgumentParser();parser.add_argument('--run',required=True)
-    generate(parser.parse_args().run)
+    parser.add_argument('--force',action='store_true');args=parser.parse_args()
+    generate(args.run,force=args.force)

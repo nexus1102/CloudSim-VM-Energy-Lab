@@ -18,6 +18,7 @@ ALLOWED = {
     "平台/src/repro/ResearchExperiments.java", "平台/tools/package_ga_fix_v10.py",
     "平台/research_platform/config/default.properties",
     "平台/tools/research_platform_audit.py",
+    "平台/tools/research_platform_report.py",
     "平台/src/repro/ResearchFigureBenchmarkV10.java",
     "平台/src/repro/ResearchDatacenter.java",
 }

@@ -3,10 +3,12 @@ param(
     [string]$Config = 'research_platform/config/default.properties',
     [string]$Output,
     [string]$Method = 'BFD-GA',
-    [string]$Mapping
+    [string]$Mapping,
+    [switch]$Force
 )
 $ErrorActionPreference = 'Stop'
 Set-Location -LiteralPath $PSScriptRoot
+if ($Force -and $Mode -ne 'Verify') { throw '-Force applies only to Verify' }
 . (Join-Path $PSScriptRoot 'runtime.ps1')
 if ($Mode -ne 'Verify') { $researchJava = (Get-ResearchJavaTools).Java }
 if ($Mode -ne 'Test' -and -not $Output) { throw 'Explicit -Output is required; existing runs are never overwritten.' }
@@ -37,6 +39,8 @@ if ($Mode -ne 'Verify') {
     if ($LASTEXITCODE -ne 0) { throw 'Research simulation failed; incomplete run retained for diagnosis.' }
 }
 if (Test-Path -LiteralPath 'tools/research_platform_report.py') {
-    & $researchPython -u tools/research_platform_report.py --run $Output
+    $reportArgs = @('-u','tools/research_platform_report.py','--run',$Output)
+    if ($Force) { $reportArgs += '--force' }
+    & $researchPython @reportArgs
     if ($LASTEXITCODE -ne 0) { throw 'Research independent audit/report failed' }
 } elseif ($Mode -eq 'Verify') { throw 'Independent audit program is missing' }

@@ -18,7 +18,7 @@ for name, source in [('new',Path(sys.argv[1])),
     env = dict(os.environ, RESEARCH_JAVA_HOME='Z:/no-jdk', RESEARCH_PYTHON=sys.executable)
     subprocess.run(['powershell','-ExecutionPolicy','Bypass','-File',
                     str(Path('run_research_platform.ps1').resolve()),'-Mode','Verify',
-                    '-Output',str(target)],env=env,check=True)
+                    '-Output',str(target),'-Force'],env=env,check=True)
     assert all((target/p).read_bytes()==data for p,data in before.items())
 for value in ['../outside.csv','inputs/../../escape.csv','C:/outside.csv']:
     try: confined(root,value)

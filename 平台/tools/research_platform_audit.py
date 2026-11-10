@@ -180,7 +180,7 @@ def require_matrix_artifacts(run):
             raise AssertionError('Incomplete Matrix artifacts: ' + ', '.join(missing))
 
 
-def verify(run):
+def verify(run,force=False):
     run=Path(run).resolve();report=run/'report';report.mkdir(exist_ok=True)
     if not (run/'completed.txt').exists():raise AssertionError('Incomplete execution marker')
     require_matrix_artifacts(run)
@@ -193,7 +193,7 @@ def verify(run):
     data=[p for p in run.rglob('*') if p.is_file() and not p.is_relative_to(report)]
     fingerprint={str(p.relative_to(run)):sha(p) for p in data};code_hash=sha(Path(__file__));parent_hash=sha(ROOT/'tools/paper_audit.py')
     cache=report/'independent_checks.json';manifest=report/'audit_manifest.json'
-    if cache.exists() and manifest.exists():
+    if not force and cache.exists() and manifest.exists():
         old=json.loads(manifest.read_text(encoding='utf-8'))
         if old==dict(files=fingerprint,audit_code=code_hash,parent_audit=parent_hash):
             result=json.loads(cache.read_text(encoding='utf-8'))
