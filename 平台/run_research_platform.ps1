@@ -8,7 +8,7 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-Location -LiteralPath $PSScriptRoot
 . (Join-Path $PSScriptRoot 'runtime.ps1')
-$researchJava = (Get-ResearchJavaTools).Java
+if ($Mode -ne 'Verify') { $researchJava = (Get-ResearchJavaTools).Java }
 if ($Mode -ne 'Test' -and -not $Output) { throw 'Explicit -Output is required; existing runs are never overwritten.' }
 if ($Mode -ne 'Test') {
     $researchPython = Get-ResearchPython
@@ -16,8 +16,10 @@ if ($Mode -ne 'Test') {
         throw 'Independent audit/report program is missing: tools/research_platform_report.py'
     }
 }
-& powershell -ExecutionPolicy Bypass -File build.ps1
-if ($LASTEXITCODE -ne 0) { throw 'Research platform compilation failed' }
+if ($Mode -ne 'Verify') {
+    & powershell -ExecutionPolicy Bypass -File build.ps1
+    if ($LASTEXITCODE -ne 0) { throw 'Research platform compilation failed' }
+}
 if ($Mode -eq 'Test' -or $Mode -eq 'Matrix') {
     foreach ($researchCheck in @('repro.ResearchConfig','repro.ResearchPlacement','repro.ResearchDestination','repro.ResearchRun')) {
         & $researchJava -cp 'bin;lib/*' $researchCheck

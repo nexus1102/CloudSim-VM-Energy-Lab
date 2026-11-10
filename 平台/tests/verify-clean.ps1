@@ -19,3 +19,5 @@ $run = 'research_platform/runs/maintenance_clean_' + [Guid]::NewGuid().ToString(
 Check-Exit
 & powershell -ExecutionPolicy Bypass -File ./run_research_platform.ps1 -Mode Verify -Output $run
 Check-Exit
+& $python tests/check-relocation.py $run
+Check-Exit

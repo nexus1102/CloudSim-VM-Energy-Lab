@@ -1,5 +1,5 @@
 """Independent module-by-module, work, event, initial mapping and hardware energy audit."""
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from collections import defaultdict
 from bisect import bisect_right
 import argparse,csv,hashlib,json,math,sys
@@ -60,13 +60,41 @@ def detailed_racks(prefix,c,s,events):
         result[t]=outputs
     return result
 
+def confined(run, relative):
+    relative = relative.replace('\\', '/')
+    if Path(relative).is_absolute() or PureWindowsPath(relative).is_absolute():
+        raise AssertionError('Archive path must be relative')
+    target = (run/relative).resolve()
+    if not target.is_relative_to(run.resolve()):
+        raise AssertionError('Archive path escapes run')
+    return target
+
+
+def resolve_trace(run, raw):
+    # Legacy absolute paths are provenance records, never rewritten in the archive.
+    if not Path(raw).is_absolute() and not PureWindowsPath(raw).is_absolute():
+        target = confined(run, raw)
+    else:
+        name = PureWindowsPath(raw).name if '\\' in raw else Path(raw).name
+        candidates = {confined(run, item['archive_path']) for item in rows(run/'provenance.csv')
+                      if item.get('archive_path') and
+                      item['archive_path'].replace('\\','/').startswith('inputs/') and
+                      Path(item['archive_path'].replace('\\','/')).name == name}
+        if len(candidates) != 1:
+            raise AssertionError('Legacy trace has no unique frozen provenance mapping: '+name)
+        target = candidates.pop()
+    if not target.is_relative_to((run/'inputs').resolve()) or target.suffix.lower() != '.csv':
+        raise AssertionError('Trace must be frozen CSV under run inputs')
+    return target
+
+
 def check_case(run,row):
     prefix=run/'cases'/row['prefix'];c=settings(Path(str(prefix)+'_research.properties'));s=settings(Path(str(prefix)+'_settings.properties'))
     schema=settings(run/'run_config.properties').get('experiment.schema','1')
     if schema=='2' and row['kind']=='dynamic':
         expected_init='random_hosts' if row['prefix'].startswith('random_init_') else 'feasible_packing'
         if c.get('research.initialization')!=expected_init:raise AssertionError('Initialization control mismatch')
-    raw_path=Path(row['raw_path']).resolve()
+    raw_path=resolve_trace(run,row['raw_path'])
     if not raw_path.is_relative_to((run/'inputs').resolve()) or raw_path.suffix.lower()!='.csv':raise AssertionError('Trace must be frozen CSV under run inputs')
     raw=np.loadtxt(raw_path,delimiter=',',ndmin=2);types=np.resize([float(x) for x in s['vm.mips'].split(',')],raw.shape[0])
     if raw.shape[0]!=int(row['vm_count']):raise AssertionError('VM count')
@@ -158,7 +186,7 @@ def verify(run):
     require_matrix_artifacts(run)
     for item in rows(run/'provenance.csv'):
         original=Path(item['path']);archive=item.get('archive_path')
-        if archive:target=run/archive
+        if archive:target=confined(run,archive)
         elif original.is_relative_to(run/'inputs'):target=original
         else:target=run/'source_snapshot'/original.relative_to(ROOT)
         if not target.resolve().is_relative_to(run) or sha(target)!=item['sha256']:raise AssertionError('Archived source/input hash mismatch: '+str(target))

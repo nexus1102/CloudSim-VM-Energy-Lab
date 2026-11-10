@@ -36,9 +36,9 @@ public final class ResearchExperiments {
         }
     }
     private static void execute(PrintWriter out,Path root,String id,String kind,Path trace,ResearchConfig c,String method,long seed,int[] fixed,boolean detailed)throws Exception {
-        double[][] raw=Simulation.read(trace);c=c.with("experiment.seed",""+seed).with("trace.path",trace.toString());
+        double[][] raw=Simulation.read(trace);c=c.with("experiment.seed",""+seed).with("trace.path",root.relativize(trace).toString().replace('\\','/'));
         long nativeBefore=ResearchDestination.nativeCalls;ResearchDatacenter dc=ResearchRun.run(raw,c,method,seed,fixed,root.resolve("cases/"+id),detailed);
-        out.printf(Locale.US,"%s,%s,%s,%s,%d,%s,%.12f,%.12f,%.12f,%.12f,%.12f,%d,%d,%d,%.9f,%.9f,%.9f,%.9f,%d,%d%n",id,kind,c.topology,method,seed,csv(trace.toString()),
+        out.printf(Locale.US,"%s,%s,%s,%s,%d,%s,%.12f,%.12f,%.12f,%.12f,%.12f,%d,%d,%d,%.9f,%.9f,%.9f,%.9f,%d,%d%n",id,kind,c.topology,method,seed,csv(root.relativize(trace).toString().replace('\\','/')),
                 dc.hostModelJ/3600000,dc.hardwareJ/3600000,dc.serverJ/3600000,dc.upsJ/3600000,dc.kwh(),dc.starts,dc.finishes,dc.blocked,
                 dc.requestedMI,dc.deliveredMI,dc.migrationSeconds,dc.cpuCheckError,raw.length,ResearchDestination.nativeCalls-nativeBefore);
         out.flush();if(out.checkError())throw new IOException("Research summary write failed");
