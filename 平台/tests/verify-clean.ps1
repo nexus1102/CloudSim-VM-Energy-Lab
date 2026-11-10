@@ -16,6 +16,12 @@ Check-Exit
 Check-Exit
 & $python tests/check-data-package.py
 Check-Exit
+& $python tests/check-serialization.py $tools.Java
+Check-Exit
+& $python tests/check-budget-statistics.py
+Check-Exit
+& $python tests/check-study-inputs.py $tools.Java
+Check-Exit
 & $python tests/check-maintenance.py
 Check-Exit
 $run = 'research_platform/runs/maintenance_clean_' + [Guid]::NewGuid().ToString('N')

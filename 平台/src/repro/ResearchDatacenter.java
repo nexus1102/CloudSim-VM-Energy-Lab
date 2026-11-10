@@ -56,7 +56,7 @@ public final class ResearchDatacenter extends PowerDatacenter implements AutoClo
             if(hosts!=null)hosts.printf(Locale.US,"%.9f,%d,%.12f,%.9f,%.9f,%.9f,%d,%.9f%n",CloudSim.clock()-ORIGIN,h.getId(),
                     h.getUtilizationOfCpu(),h.serviceMips(),h.requestedMips(),p,h.getVmList().size(),extra);}
         for(double p:rackPower)loss+=model.loss(p);
-        if(assignments!=null)for(Vm v:w.vms){PaperHost h=(PaperHost)v.getHost();assignments.printf(Locale.US,"%.9f,%d,%d,%.9f,%.9f,%.9f,%b%n",
+        if(assignments!=null)for(Vm v:w.vms){PaperHost h=(PaperHost)v.getHost();assignments.printf(Locale.US,"%.9f,%d,%d,%.17g,%.9f,%.9f,%b%n",
                 CloudSim.clock()-ORIGIN,v.getId(),h.getId(),w.trace[v.getId()].getUtilization(CloudSim.clock()),v.getCurrentRequestedTotalMips(),
                 h.getVmScheduler().getTotalAllocatedMipsForVm(v),v.isInMigration());}
     }
