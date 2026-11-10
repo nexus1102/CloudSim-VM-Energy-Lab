@@ -1,0 +1,422 @@
+{
+  "dataset": {
+    "commit": "344ffdbf7e528bfa6f276014e889e68a0cb640c2",
+    "traces": 11746,
+    "samples": 3382848
+  },
+  "main": {
+    "FFD": {
+      "mean_kwh": 159.749973717,
+      "sd_kwh": 0.0,
+      "mean_w": 6656.248904874999,
+      "migrations_mean": 18506.0
+    },
+    "BFD": {
+      "mean_kwh": 159.749973717,
+      "sd_kwh": 0.0,
+      "mean_w": 6656.248904874999,
+      "migrations_mean": 18130.0
+    },
+    "GA": {
+      "mean_kwh": 156.8785798706,
+      "sd_kwh": 0.03210245681121763,
+      "mean_w": 6536.607494608333,
+      "migrations_mean": 24015.0
+    },
+    "GGA": {
+      "mean_kwh": 157.43599515340003,
+      "sd_kwh": 0.08752814011930395,
+      "mean_w": 6559.833131391668,
+      "migrations_mean": 23879.0
+    },
+    "BFD-GA": {
+      "mean_kwh": 156.08853825160003,
+      "sd_kwh": 3.5826847157753994e-07,
+      "mean_w": 6503.689093816668,
+      "migrations_mean": 20577.8
+    }
+  },
+  "energy_comparison": [
+    {
+      "method": "FFD",
+      "corrected_mean_kwh": 159.749973717,
+      "corrected_sd_kwh": 0.0,
+      "reference_image_estimated_kwh": 157.66176470588232,
+      "image_reading_uncertainty_kwh": 1.5,
+      "thesis_text_kwh": 189.37346437346437,
+      "relative_to_image_pct": 1.3244866407611466,
+      "relative_to_text_pct": -15.642894190309441
+    },
+    {
+      "method": "BFD",
+      "corrected_mean_kwh": 159.749973717,
+      "corrected_sd_kwh": 0.0,
+      "reference_image_estimated_kwh": 158.218137254902,
+      "image_reading_uncertainty_kwh": 1.5,
+      "thesis_text_kwh": 188.774364731095,
+      "relative_to_image_pct": 0.9681800637243665,
+      "relative_to_text_pct": -15.375176102666078
+    },
+    {
+      "method": "GA",
+      "corrected_mean_kwh": 156.8785798706,
+      "corrected_sd_kwh": 0.03210245681121763,
+      "reference_image_estimated_kwh": 165.99360613810742,
+      "image_reading_uncertainty_kwh": 1.5,
+      "thesis_text_kwh": 198.47639484978538,
+      "relative_to_image_pct": -5.491191184751831,
+      "relative_to_text_pct": -20.9585704187484
+    },
+    {
+      "method": "GGA",
+      "corrected_mean_kwh": 157.43599515340003,
+      "corrected_sd_kwh": 0.08752814011930395,
+      "reference_image_estimated_kwh": 159.74317988064792,
+      "image_reading_uncertainty_kwh": 1.5,
+      "thesis_text_kwh": 191.3718187461204,
+      "relative_to_image_pct": -1.4443087516923692,
+      "relative_to_text_pct": -17.732926308100073
+    },
+    {
+      "method": "BFD-GA",
+      "corrected_mean_kwh": 156.08853825160003,
+      "corrected_sd_kwh": 3.5826847157753994e-07,
+      "reference_image_estimated_kwh": 154.5358056265985,
+      "image_reading_uncertainty_kwh": 1.5,
+      "thesis_text_kwh": 184.98,
+      "relative_to_image_pct": 1.004772077710836,
+      "relative_to_text_pct": -15.618694858038683
+    }
+  ],
+  "ablation": [
+    {
+      "case": "ablation_v1",
+      "method": "BFD-GA",
+      "seed": "101",
+      "resources": "uniform2500",
+      "controller": "overload_only",
+      "vm_count": "100",
+      "mean_vm_cpu": "0.250000000",
+      "mean_physical_host_load": "0.250000000",
+      "server_kwh": "334.030783333",
+      "ups_kwh": "30.183088505",
+      "total_kwh": "364.213871838",
+      "migrations": "686",
+      "active_start": "28",
+      "active_end": "53",
+      "active_min": "28",
+      "active_max": "53",
+      "active_mean": "48.673611",
+      "above_threshold_host_samples": "0",
+      "cpu_error": "2.22044604925e-16",
+      "power_error_w": "3.63797880709e-12"
+    },
+    {
+      "case": "ablation_same100_raw",
+      "method": "BFD-GA",
+      "seed": "101",
+      "resources": "uniform2500",
+      "controller": "overload_only",
+      "vm_count": "100",
+      "mean_vm_cpu": "0.118864583",
+      "mean_physical_host_load": "0.118864583",
+      "server_kwh": "187.852075833",
+      "ups_kwh": "25.066278459",
+      "total_kwh": "212.918354292",
+      "migrations": "498",
+      "active_start": "13",
+      "active_end": "33",
+      "active_min": "13",
+      "active_max": "34",
+      "active_mean": "28.684028",
+      "above_threshold_host_samples": "18",
+      "cpu_error": "3.33066907388e-16",
+      "power_error_w": "3.63797880709e-12"
+    },
+    {
+      "case": "ablation_same100_raw_types",
+      "method": "BFD-GA",
+      "seed": "101",
+      "resources": "official_vm_types",
+      "controller": "overload_only",
+      "vm_count": "100",
+      "mean_vm_cpu": "0.118864583",
+      "mean_physical_host_load": "0.075681111",
+      "server_kwh": "120.246160600",
+      "ups_kwh": "23.438242888",
+      "total_kwh": "143.684403488",
+      "migrations": "272",
+      "active_start": "8",
+      "active_end": "21",
+      "active_min": "8",
+      "active_max": "21",
+      "active_mean": "18.385417",
+      "above_threshold_host_samples": "8",
+      "cpu_error": "4.44089209850e-16",
+      "power_error_w": "1.81898940355e-12"
+    },
+    {
+      "case": "ablation_same100_periodic",
+      "method": "BFD-GA",
+      "seed": "101",
+      "resources": "official_vm_types",
+      "controller": "periodic_full",
+      "vm_count": "100",
+      "mean_vm_cpu": "0.118864583",
+      "mean_physical_host_load": "0.075681111",
+      "server_kwh": "70.455568933",
+      "ups_kwh": "22.552493665",
+      "total_kwh": "93.008062598",
+      "migrations": "23560",
+      "active_start": "8",
+      "active_end": "8",
+      "active_min": "7",
+      "active_max": "12",
+      "active_mean": "8.881944",
+      "above_threshold_host_samples": "67",
+      "cpu_error": "5.55111512313e-16",
+      "power_error_w": "9.09494701773e-13"
+    },
+    {
+      "case": "ablation_cohort25_uniform",
+      "method": "BFD-GA",
+      "seed": "101",
+      "resources": "uniform2500",
+      "controller": "periodic_full",
+      "vm_count": "100",
+      "mean_vm_cpu": "0.250000000",
+      "mean_physical_host_load": "0.250000000",
+      "server_kwh": "219.132216667",
+      "ups_kwh": "25.950666110",
+      "total_kwh": "245.082882776",
+      "migrations": "24652",
+      "active_start": "27",
+      "active_end": "26",
+      "active_min": "24",
+      "active_max": "30",
+      "active_mean": "26.743056",
+      "above_threshold_host_samples": "7428",
+      "cpu_error": "4.44089209850e-16",
+      "power_error_w": "5.45696821064e-12"
+    },
+    {
+      "case": "ablation_cohort25_overload",
+      "method": "BFD-GA",
+      "seed": "101",
+      "resources": "official_vm_types",
+      "controller": "overload_only",
+      "vm_count": "100",
+      "mean_vm_cpu": "0.250000000",
+      "mean_physical_host_load": "0.144414444",
+      "server_kwh": "196.055217600",
+      "ups_kwh": "25.263547594",
+      "total_kwh": "221.318765194",
+      "migrations": "250",
+      "active_start": "17",
+      "active_end": "30",
+      "active_min": "17",
+      "active_max": "30",
+      "active_mean": "28.708333",
+      "above_threshold_host_samples": "5",
+      "cpu_error": "3.33066907388e-16",
+      "power_error_w": "3.63797880709e-12"
+    },
+    {
+      "case": "stable_main",
+      "method": "BFD-GA",
+      "seed": "101",
+      "resources": "official_vm_types",
+      "controller": "periodic_stable",
+      "vm_count": "100",
+      "mean_vm_cpu": "0.250000000",
+      "mean_physical_host_load": "0.144414444",
+      "server_kwh": "132.402575933",
+      "ups_kwh": "23.685961899",
+      "total_kwh": "156.088537832",
+      "migrations": "20549",
+      "active_start": "17",
+      "active_end": "16",
+      "active_min": "15",
+      "active_max": "19",
+      "active_mean": "16.559028",
+      "above_threshold_host_samples": "80",
+      "cpu_error": "4.44089209850e-16",
+      "power_error_w": "1.81898940355e-12"
+    }
+  ],
+  "migration": [
+    {
+      "method": "FFD",
+      "periodic_migrations_mean": 18506.0,
+      "stable_migrations_mean": 18506.0,
+      "reduction_pct": 0.0
+    },
+    {
+      "method": "BFD",
+      "periodic_migrations_mean": 18130.0,
+      "stable_migrations_mean": 18130.0,
+      "reduction_pct": 0.0
+    },
+    {
+      "method": "GA",
+      "periodic_migrations_mean": 25384.0,
+      "stable_migrations_mean": 24015.0,
+      "reduction_pct": 5.393161046328395
+    },
+    {
+      "method": "GGA",
+      "periodic_migrations_mean": 24789.2,
+      "stable_migrations_mean": 23879.0,
+      "reduction_pct": 3.6717602827037608
+    },
+    {
+      "method": "BFD-GA",
+      "periodic_migrations_mean": 24441.8,
+      "stable_migrations_mean": 20577.8,
+      "reduction_pct": 15.808982971794222
+    }
+  ],
+  "robustness": [
+    {
+      "date": "20110303",
+      "cohort": "random",
+      "bfd_kwh": 92.547537394,
+      "bfd_ga_kwh": 91.557254444,
+      "saving_pct": 1.07002625665133
+    },
+    {
+      "date": "20110306",
+      "cohort": "random",
+      "bfd_kwh": 93.632348583,
+      "bfd_ga_kwh": 92.603942511,
+      "saving_pct": 1.0983448429560319
+    },
+    {
+      "date": "20110309",
+      "cohort": "random",
+      "bfd_kwh": 71.10103576,
+      "bfd_ga_kwh": 70.611146823,
+      "saving_pct": 0.6890039389209643
+    },
+    {
+      "date": "20110322",
+      "cohort": "random",
+      "bfd_kwh": 76.529670833,
+      "bfd_ga_kwh": 75.936210902,
+      "saving_pct": 0.7754638489103433
+    },
+    {
+      "date": "20110325",
+      "cohort": "random",
+      "bfd_kwh": 93.792841621,
+      "bfd_ga_kwh": 92.770742898,
+      "saving_pct": 1.0897406511363803
+    },
+    {
+      "date": "20110403",
+      "cohort": "random",
+      "bfd_kwh": 91.681102556,
+      "bfd_ga_kwh": 90.715586017,
+      "saving_pct": 1.053124921147455
+    },
+    {
+      "date": "20110409",
+      "cohort": "random",
+      "bfd_kwh": 78.491960857,
+      "bfd_ga_kwh": 77.856625893,
+      "saving_pct": 0.8094267961498314
+    },
+    {
+      "date": "20110411",
+      "cohort": "random",
+      "bfd_kwh": 92.109172535,
+      "bfd_ga_kwh": 91.131164658,
+      "saving_pct": 1.0617920561911125
+    },
+    {
+      "date": "20110412",
+      "cohort": "random",
+      "bfd_kwh": 82.600119164,
+      "bfd_ga_kwh": 81.867606343,
+      "saving_pct": 0.8868181165037045
+    },
+    {
+      "date": "20110420",
+      "cohort": "random",
+      "bfd_kwh": 79.746430714,
+      "bfd_ga_kwh": 79.081961283,
+      "saving_pct": 0.8332278009821306
+    },
+    {
+      "date": "20110303",
+      "cohort": "cohort25",
+      "bfd_kwh": 159.749973717,
+      "bfd_ga_kwh": 156.088537832,
+      "saving_pct": 2.291979021847167
+    },
+    {
+      "date": "20110306",
+      "cohort": "cohort25",
+      "bfd_kwh": 151.051497258,
+      "bfd_ga_kwh": 147.815983066,
+      "saving_pct": 2.1419941216959044
+    },
+    {
+      "date": "20110309",
+      "cohort": "cohort25",
+      "bfd_kwh": 169.925895895,
+      "bfd_ga_kwh": 165.70186255,
+      "saving_pct": 2.485809077393424
+    },
+    {
+      "date": "20110322",
+      "cohort": "cohort25",
+      "bfd_kwh": 156.66420197,
+      "bfd_ga_kwh": 153.147935905,
+      "saving_pct": 2.244460457963035
+    },
+    {
+      "date": "20110325",
+      "cohort": "cohort25",
+      "bfd_kwh": 159.814951832,
+      "bfd_ga_kwh": 156.144872497,
+      "saving_pct": 2.296455552455469
+    },
+    {
+      "date": "20110403",
+      "cohort": "cohort25",
+      "bfd_kwh": 164.848689766,
+      "bfd_ga_kwh": 160.918479911,
+      "saving_pct": 2.3841316910549204
+    },
+    {
+      "date": "20110409",
+      "cohort": "cohort25",
+      "bfd_kwh": 175.864531566,
+      "bfd_ga_kwh": 171.334980366,
+      "saving_pct": 2.575591086881623
+    },
+    {
+      "date": "20110411",
+      "cohort": "cohort25",
+      "bfd_kwh": 165.691785709,
+      "bfd_ga_kwh": 161.716404295,
+      "saving_pct": 2.3992628222269587
+    },
+    {
+      "date": "20110412",
+      "cohort": "cohort25",
+      "bfd_kwh": 163.104645235,
+      "bfd_ga_kwh": 159.252793993,
+      "saving_pct": 2.3615827964005938
+    },
+    {
+      "date": "20110420",
+      "cohort": "cohort25",
+      "bfd_kwh": 163.625502073,
+      "bfd_ga_kwh": 159.75292874,
+      "saving_pct": 2.366729686960598
+    }
+  ],
+  "cpu_max_error": 7.77156117238e-16
+}

@@ -1,0 +1,2 @@
+﻿kind,scenario,method,n,mean_kwh,sd_kwh,mean_migrations,requested_mi,delivered_mi,unserved_pct,kwh_per_billion_mi,ups_kwh
+single,single_BFD-GA,BFD-GA,1,184.654813680519,0,453.0,3119352000.0000005,3098033190.7200046,0.6834371138619844,59.60388488852953,24.520505012922

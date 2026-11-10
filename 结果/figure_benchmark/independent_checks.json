@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "solves": 1296,
+  "independently_recomputed_plans": 82458,
+  "feasible_solves": 1296,
+  "epsilon_w": 1e-07,
+  "criterion": "Native objectives, same feasible search-space 300-generation reference; GA/GGA server target, BFD-GA reference+1% of concentrated BFD avoidable power; strict 1e-7W guard also reported; 3/3 seeds; no author stopping rule or optimum certificate",
+  "profiles": "current128 vs paper illustrative4 (not proved actual experimental RAM)"
+}

@@ -1,0 +1,2 @@
+prefix,kind,topology,method,seed,raw_path,host_model_kwh,hardware_kwh,server_kwh,ups_kwh,total_kwh,started,finished,blocked,requested_mi,delivered_mi,migration_seconds,cpu_error,vm_count,native_calls
+single_BFD-GA,single,n_plus_1_standby,BFD-GA,101,"H:\Company_project_study_PHD\SOFTWARE\simulation\v10_GA与规模实验口径修正\平台\research_platform\runs\learning_20261015_110124_887\inputs\cohort25_20110303.csv",160.134308667597,0.000000000000,160.134308667597,24.520505012922,184.654813680519,453,453,0,3119352000.000000500,3098033190.720004600,3710.976000000,0.000000000,100,453

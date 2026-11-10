@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "cases": 1,
+  "counts": {
+    "single": 1
+  },
+  "solver_trajectories": 0,
+  "scope": "Independent module loss, real event lifecycle, hardware/UPS feedback, actual completed work, CPU/ownership/resource and initial BFD group checks",
+  "checks": [
+    {
+      "prefix": "single_GA",
+      "segments": 564,
+      "duration_s": 86400,
+      "migrations": 477,
+      "states": 1530,
+      "cpu_error": 4.446443213623752e-13,
+      "energy_kwh": 186.5933443040684,
+      "shortage_fraction": 0.003459855723880876,
+      "hardware_kwh": 0.0,
+      "host_model_kwh": 162.99316164249538
+    }
+  ]
+}

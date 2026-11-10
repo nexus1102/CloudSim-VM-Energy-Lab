@@ -1,0 +1,6 @@
+/平台/bin/
+**/__pycache__/
+*.py[cod]
+/平台/.venv/
+/平台/research_platform/runs/maintenance_*/
+/平台/版本迭代/

@@ -1,0 +1,2 @@
+﻿kind,scenario,method,n,mean_kwh,sd_kwh,mean_migrations,requested_mi,delivered_mi,unserved_pct,kwh_per_billion_mi,ups_kwh
+single,single_GA,GA,1,186.593344304068,0,477.0,3119352000.0000014,3108559492.1280026,0.3459855723880745,60.025662940210694,23.600182661573

@@ -1,0 +1,65 @@
+{
+  "source_pdf_sha256": "3394a090d7bd26b40d6fc32b1303d432ed07c28a95e4a2375223b32d428f058e",
+  "cloudsim": "3.0.3",
+  "java": "8",
+  "hosts": 100,
+  "racks": 5,
+  "hosts_per_rack": 20,
+  "vm_count": 100,
+  "idle_w": 218.3,
+  "max_w": 350.0,
+  "host_mips": 2500,
+  "sample_interval_s": 300,
+  "duration_s": 86400,
+  "dynamic_mean": 0.25,
+  "static_vm_count_status": "assumption; not specified in static experiment",
+  "rack_rated_w": 7000,
+  "rack_rated_status": "assumption: 20 x 350 W",
+  "n_plus_1_n": 4,
+  "redundancy_status": "assumed equal load-sharing; N+1 factor 1.25; 2N factor 2",
+  "table_2_6": {
+    "a0": 0.0241,
+    "a1": 0.0353,
+    "a2": 0.0617,
+    "rated_w": 2000
+  },
+  "ac_curve": {
+    "a0": 0.0376,
+    "a1": 0.0069,
+    "a2": 0.0319
+  },
+  "dc_curve": {
+    "a0": 0.0549,
+    "a1": 0.0077,
+    "a2": 0.0207
+  },
+  "curve_status": "approximate quadratic reconstruction from figure 2-5; not author parameters",
+  "population": 40,
+  "generations": 60,
+  "crossover": 0.8,
+  "mutation": 0.05,
+  "seeds": [
+    101,
+    202,
+    303,
+    404,
+    505
+  ],
+  "ga_parameter_status": "assumptions; not numerically specified",
+  "weights": [
+    0.01,
+    0.22,
+    0.38,
+    0.26,
+    0.1,
+    0.02,
+    0.01
+  ],
+  "national_bill_usd": 8000000000.0,
+  "bill_status": "assumption approximately inferred from 138M / 1.72%",
+  "planetlab_repository": "https://github.com/cloudsimplus/planetlab-workload-traces",
+  "planetlab_tree_sha": "2ea0bc838715d108d3ceaf40d6e90f054db3d197",
+  "trace_selection_seed": 42,
+  "trace_date": "20110303",
+  "workload_status": "public substitute; thesis trace date, IDs and transformations unspecified"
+}

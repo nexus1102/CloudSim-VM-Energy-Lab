@@ -1,0 +1,5 @@
+# Preserve historical archive bytes; do not normalize sealed text files.
+* -text
+*.jar binary
+*.png binary
+*.pdf binary

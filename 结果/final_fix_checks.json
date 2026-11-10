@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "unchanged_non_bfd_ga_cases": 877,
+  "bfd_server_identity_cases": 168,
+  "benchmark_input_hash": "69e6e287205b93c7d088c0544945ece8c7f23a746b7df3d7126142693df7655d"
+}

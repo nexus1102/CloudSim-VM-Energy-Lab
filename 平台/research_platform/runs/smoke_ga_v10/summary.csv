@@ -1,0 +1,2 @@
+prefix,kind,topology,method,seed,raw_path,host_model_kwh,hardware_kwh,server_kwh,ups_kwh,total_kwh,started,finished,blocked,requested_mi,delivered_mi,migration_seconds,cpu_error,vm_count,native_calls
+single_GA,single,n_plus_1_standby,GA,101,"H:\Company_project_study_PHD\Reference\复现结果\版本迭代\v10_GA与规模实验口径修正\平台\research_platform\runs\smoke_ga_v10\inputs\cohort25_20110303.csv",162.993161642495,0.000000000000,162.993161642495,23.600182661573,186.593344304068,477,477,0,3119352000.000001400,3108559492.128002600,3907.584000000,0.000000000,100,477

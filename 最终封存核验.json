@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "original_sealed_files": 270,
+  "supplemental_files": 115,
+  "packaged_test": "PASS",
+  "packaged_single": "PASS",
+  "full_thesis_trends_recovered": false
+}

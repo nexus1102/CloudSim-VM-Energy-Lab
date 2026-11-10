@@ -1,0 +1,13 @@
+{
+  "same_cases": true,
+  "cases": 1096,
+  "maximum_differences": {
+    "total_kwh": 0.0,
+    "requested_mi": 0.0,
+    "delivered_mi": 0.0,
+    "started": 0.0,
+    "finished": 0.0,
+    "blocked": 0.0
+  },
+  "meaning": "Current interface guards preserve built-in baseline outputs; all cases genuinely re-executed"
+}

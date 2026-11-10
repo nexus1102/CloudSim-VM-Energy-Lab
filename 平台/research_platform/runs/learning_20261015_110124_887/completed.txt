@@ -1,0 +1,1 @@
+PASS: single; dynamic=0; static=0

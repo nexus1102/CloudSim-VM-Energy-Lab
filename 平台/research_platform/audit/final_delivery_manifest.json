@@ -1,0 +1,58 @@
+[
+  {
+    "path": "H:\\Company_project_study_PHD\\Reference\\复现结果\\tools\\research_platform_report.py",
+    "sha256": "AC4B15F2BD8354C92C3A8E6F6B28FE598989F6A6C25F8C4819D152F5279B0E04"
+  },
+  {
+    "path": "H:\\Company_project_study_PHD\\Reference\\复现结果\\tools\\research_platform_audit.py",
+    "sha256": "B729AFA23CB75F5776797CE6567CA8E417A0D6E1905FEA2DAC3A8BD2B2154EB9"
+  },
+  {
+    "path": "H:\\Company_project_study_PHD\\Reference\\复现结果\\run_research_platform.ps1",
+    "sha256": "6C0450F29050BB411BBD067ADD7FEB9B1B213DF500274A976D1965E902773E17"
+  },
+  {
+    "path": "H:\\Company_project_study_PHD\\Reference\\复现结果\\research_platform\\README.md",
+    "sha256": "7F84CB066CDCF684DAB63C557280BF5029AF4B01AB82EF86D9D9616E4A7E7E60"
+  },
+  {
+    "path": "H:\\Company_project_study_PHD\\Reference\\复现结果\\research_platform\\物理假设与论文依据.md",
+    "sha256": "0D6C29575300DE16E885D56257D561E176769D3EEF7D44CB52B91F0DB8BAB80F"
+  },
+  {
+    "path": "H:\\Company_project_study_PHD\\Reference\\复现结果\\correction\\论文平台扩展与仿真思路核对.md",
+    "sha256": "04BED6244591E22DE303A38D93D8AF4341FD8DE0763BB5F7A0F8D31DD90B9148"
+  },
+  {
+    "path": "H:\\Company_project_study_PHD\\Reference\\复现结果\\src\\repro\\ResearchConfig.java",
+    "sha256": "882EABF87300DE3C6812785EBE26A68AAC314BE3BD8A7470F6916CC42D57AEF7"
+  },
+  {
+    "path": "H:\\Company_project_study_PHD\\Reference\\复现结果\\src\\repro\\ResearchDatacenter.java",
+    "sha256": "244BC059E9C7F86D623844B2BA91DC66D31592C64A9B2DD230D8D61536AF6468"
+  },
+  {
+    "path": "H:\\Company_project_study_PHD\\Reference\\复现结果\\src\\repro\\ResearchDestination.java",
+    "sha256": "9ED461B159600FC0DB269ED88A3B3CA9E484F58B32A9A8A131690C9EDC47604A"
+  },
+  {
+    "path": "H:\\Company_project_study_PHD\\Reference\\复现结果\\src\\repro\\ResearchExampleController.java",
+    "sha256": "D33031B45C266DE28C960AEA74EF667831B8CFF691F2211B1106BE115836B574"
+  },
+  {
+    "path": "H:\\Company_project_study_PHD\\Reference\\复现结果\\src\\repro\\ResearchExperiments.java",
+    "sha256": "8FC82977C1A30910B669A4F7548245494D7C4336B46F9DC7BB54CEA3FFDF4B79"
+  },
+  {
+    "path": "H:\\Company_project_study_PHD\\Reference\\复现结果\\src\\repro\\ResearchPlacement.java",
+    "sha256": "178CD58DB9BF55373F5CA6C86BC33697F68CE7EC46BB512E1EBCBD3C78938B6C"
+  },
+  {
+    "path": "H:\\Company_project_study_PHD\\Reference\\复现结果\\src\\repro\\ResearchPolicy.java",
+    "sha256": "6D7AA7017B7AF4663A1E29CDE052518B9CB15D0E4539F0ACA578239487D04136"
+  },
+  {
+    "path": "H:\\Company_project_study_PHD\\Reference\\复现结果\\src\\repro\\ResearchRun.java",
+    "sha256": "83CA70C08667B53858BAABCA1C907C9D56677455FC313F8FFF26C95C964FB13D"
+  }
+]
