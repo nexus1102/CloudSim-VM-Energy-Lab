@@ -1,0 +1,18 @@
+{
+  "dynamic_objectives": "GA/GGA server_only; BFD-GA total, as stored in base configurations.",
+  "budget_objective": "total server+UPS power for all methods; explicitly overridden in frozen ResearchBudgetBenchmark.java.",
+  "budget_conditions": {
+    "generations": 60,
+    "scored_candidates": 4000,
+    "soft_time_ms": 100,
+    "population": 40
+  },
+  "measurement": "One JVM per date/profile, serial solves after the dynamic pool has completed. Each method warmup=2 generations, seed7. Methods shuffled per seed; budget order is generations,evaluations,time. Not a JIT steady-state guarantee.",
+  "time_scope": "Includes BFD preprocessing, initialization and solver; excludes trace loading, warmup and independent final-power recomputation. Full-population checkpoints can overrun; solve_ns and overrun_ns retained.",
+  "evaluation_scope": "Counts candidate score calls, including elite rescoring; excludes feasibility and final validation.",
+  "search_spaces": "BFD-GA retains fixed BFD groups; same objective/budget does not imply identical search spaces.",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.7",
+  "logical_cpus": 16,
+  "java_version": "openjdk version \"1.8.0_504\"\nOpenJDK Runtime Environment (Temurin)(build 1.8.0_504-b01)\nOpenJDK 64-Bit Server VM (Temurin)(build 25.504-b01, mixed mode)"
+}

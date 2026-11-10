@@ -16,6 +16,8 @@ Check-Exit
 Check-Exit
 & $python tests/check-data-package.py
 Check-Exit
+& $python tests/check-download.py
+Check-Exit
 & $python tests/check-serialization.py $tools.Java
 Check-Exit
 & $python tests/check-budget-statistics.py

@@ -11,10 +11,13 @@ def restore(archive,output):
         records=manifest['files'];names=set();blobs={}
         for r in records:
             name=r['path'];parts=PurePosixPath(name).parts
-            if not parts or name.startswith('/') or '\\' in name or ':' in name or '..' in parts or name in names or parts[0] in {'.restore-blobs','dataset_manifest.json'}:
+            if not parts or name.startswith('/') or '\\' in name or ':' in name or '..' in parts or name.casefold() in names or PurePosixPath(name).as_posix()!=name or parts[0].casefold() in {'.restore-blobs','dataset_manifest.json'}:
                 raise ValueError('Unsafe/duplicate output path: '+name)
+            reserved={'CON','PRN','AUX','NUL'}|{p+str(i) for p in ['COM','LPT'] for i in range(1,10)}
+            if any(part.rstrip(' .')!=part or part.split('.')[0].upper() in reserved for part in parts):
+                raise ValueError('Nonportable Windows path: '+name)
             if not re.fullmatch('[0-9a-f]{64}',r['sha256']) or r['size']<0:raise ValueError('Invalid hash/size')
-            names.add(name)
+            names.add(name.casefold())
             if r['sha256'] in blobs and blobs[r['sha256']]!=r['size']:raise ValueError('Conflicting blob sizes')
             blobs[r['sha256']]=r['size']
         if len(z.namelist())!=len(set(z.namelist())):raise ValueError('Duplicate ZIP members')

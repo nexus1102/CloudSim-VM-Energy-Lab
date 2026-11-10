@@ -19,3 +19,12 @@ try:restore(r/'corrupt.zip',r/'corrupt-output')
 except ValueError:pass
 else:raise AssertionError('Corrupted blob accepted')
 print('PASS lossless dedup, traversal and corruption rejection')
+
+for i,names in enumerate([['a//b'],['A.csv','a.csv'],['.RESTORE-BLOBS/file'],['folder/NUL'],['file.']]):
+    archive=r/f'alias-{i}.zip'
+    with zipfile.ZipFile(archive,'w') as z:
+        z.writestr('manifest.json',json.dumps({'schema':1,'files':[{'path':n,'sha256':'0'*64,'size':0} for n in names]}))
+    try:restore(archive,r/f'alias-output-{i}')
+    except ValueError:pass
+    else:raise AssertionError('Unsafe alias/device accepted: '+str(names))
+print('PASS canonical aliases, case collisions, cache aliases and Windows device rejection')

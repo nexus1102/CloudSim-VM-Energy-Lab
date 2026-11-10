@@ -14,7 +14,7 @@ def package(output,sources):
     files=[];blobs={};names=set()
     for label,source in sources:
         source=Path(source)
-        if not label or label.startswith('/') or '\\' in label or ':' in label or '..' in PurePosixPath(label).parts:
+        if not label or label.startswith('/') or '\\' in label or ':' in label or '..' in PurePosixPath(label).parts or PurePosixPath(label).as_posix()!=label:
             raise ValueError('Unsafe source label')
         if source.is_symlink():raise ValueError('Symlink source unsupported')
         if not source.exists():raise FileNotFoundError(source)
@@ -23,8 +23,8 @@ def package(output,sources):
             if p.is_symlink():raise ValueError('Symlink source unsupported')
             if not p.is_file() or '__pycache__' in p.parts:continue
             relative=label+'/'+p.relative_to(source).as_posix() if source.is_dir() else label
-            if relative in names:raise ValueError('Duplicate package path')
-            names.add(relative);digest=sha(p);blobs.setdefault(digest,p)
+            if relative.casefold() in names:raise ValueError('Duplicate package path')
+            names.add(relative.casefold());digest=sha(p);blobs.setdefault(digest,p)
             files.append(dict(path=relative,sha256=digest,size=p.stat().st_size))
     output.parent.mkdir(parents=True,exist_ok=True)
     with zipfile.ZipFile(output,'x',compression=zipfile.ZIP_DEFLATED,compresslevel=6,allowZip64=True) as z:
