@@ -1,7 +1,7 @@
 """Frozen ten-date plan, auditable Single runs and paired date-level inference."""
 import argparse,csv,json,subprocess,shutil,hashlib
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor,as_completed
+from concurrent.futures import ProcessPoolExecutor,as_completed
 from collections import defaultdict
 import numpy as np
 from research_platform_audit import verify,sha,module_loss,bfd,same_groups
@@ -57,7 +57,7 @@ def prepare(out):
             inputs.append(dict(date=date,profile=profile,source=source.relative_to(ROOT).as_posix(),source_sha256=sha(source),
                 path=trace.relative_to(out).as_posix(),sha256=sha(trace),clipped_fraction=float(np.mean(unclipped!=data))))
             for seed in SEEDS:
-                config=out/'configs'/f'{date}_{profile}_{seed}.properties';c=dict(base,**{'trace.path':trace.as_posix(),'experiment.seed':str(seed)})
+                config=out/'configs'/f'{date}_{profile}_{seed}.properties';c=dict(base,**{'trace.path':trace.as_posix(),'experiment.seed':str(seed),'packing.cap':'1'})
                 config.write_text(''.join(k+'='+v+'\n' for k,v in sorted(c.items())),encoding='utf-8')
                 for method in METHODS:plan.append(dict(date=date,profile=profile,seed=seed,method=method,
                     config=config.relative_to(out).as_posix(),run=f'runs/{date}_{profile}_{method}_{seed}'))
@@ -66,9 +66,21 @@ def prepare(out):
         shutil.copytree(ROOT/name,snapshot/name,ignore=shutil.ignore_patterns('__pycache__'))
     source_hashes={p.relative_to(snapshot).as_posix():sha(p) for p in snapshot.rglob('*') if p.is_file()}
     metadata=dict(schema=1,source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),config_hashes={f.relative_to(out).as_posix():sha(f) for f in (out/'configs').glob('*.properties')},inputs=inputs,cases=plan,seeds=SEEDS,source_hashes=source_hashes,
-        interpretation='Ten selected-date cohorts, not a confirmed longitudinal same-VM panel. Light=.6*CPU; bursty=VM daily mean+1.5*deviation, clipped to [0,1]. Synthetic profiles are not additional independent dates.',
+        interpretation='All study cases use packing.cap=1 (physical capacity), keeping CPU migration trigger .9. This differs from the original paper matrix cap .9. Ten selected-date cohorts, not a confirmed longitudinal same-VM panel. Light=.6*CPU; bursty=VM daily mean+1.5*deviation, clipped to [0,1]. Synthetic profiles are not additional independent dates.',
         budgets='All solvers assessed by total server+UPS power. 60 generations / 4000 scored candidates / 100ms soft checkpoints. Preprocessing counted in time; objective count excludes feasibility/power validation. BFD-GA retains fixed BFD groups; search spaces differ.')
     (out/'plan.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2),encoding='utf-8')
+
+def execute_case(payload):
+    out,item,java=payload
+    run=out/item['run']
+    if not run.exists():
+        result=subprocess.run([java,'-Xmx1g','-cp','bin;lib/*','repro.ResearchExperiments','--mode','single','--config',str(out/item['config']),
+            '--output',str(run),'--method',item['method']],cwd=ROOT,capture_output=True,text=True,encoding='utf-8',errors='replace')
+        (run.parent/(run.name+'.log')).write_text(result.stdout+result.stderr,encoding='utf-8')
+        if result.returncode:raise RuntimeError('Simulation failed: '+str(run))
+    verify(run)
+    r=list(rows(run/'summary.csv'))[0]
+    return dict(item,**{k:r[k] for k in ['total_kwh','requested_mi','delivered_mi','finished']})
 
 def execute(out,java):
     plan=json.loads((out/'plan.json').read_text(encoding='utf-8'))
@@ -78,22 +90,16 @@ def execute(out,java):
         if sha(out/rel)!=expected:raise AssertionError('Frozen configuration changed')
     for item in plan['inputs']:
         if sha(out/item['path'])!=item['sha256']:raise AssertionError('Frozen input changed')
-    def case(item):
-        run=out/item['run']
-        if not run.exists():
-            result=subprocess.run([java,'-Xmx1g','-cp','bin;lib/*','repro.ResearchExperiments','--mode','single','--config',str(out/item['config']),
-                '--output',str(run),'--method',item['method']],cwd=ROOT,capture_output=True,text=True,encoding='utf-8',errors='replace')
-            (run.parent/(run.name+'.log')).write_text(result.stdout+result.stderr,encoding='utf-8')
-            if result.returncode:raise RuntimeError('Simulation failed: '+str(run))
-        verify(run)
-        r=list(rows(run/'summary.csv'))[0]
-        return dict(item,**{k:r[k] for k in ['total_kwh','requested_mi','delivered_mi','finished']})
     collected=[]
-    with ThreadPoolExecutor(max_workers=2) as pool:
-        pending=[pool.submit(case,item) for item in plan['cases']]
-        for job in as_completed(pending):
-            collected.append(job.result())
-            if len(collected)%25==0:print(f'ROBUST {len(collected)}/{len(pending)}',flush=True)
+    with ProcessPoolExecutor(max_workers=4) as pool:
+        pending=[pool.submit(execute_case,(out,item,java)) for item in plan['cases']]
+        try:
+            for job in as_completed(pending):
+                collected.append(job.result())
+                if len(collected)%25==0:print(f'ROBUST {len(collected)}/{len(pending)}',flush=True)
+        except BaseException:
+            for job in pending:job.cancel()
+            raise
     collected.sort(key=lambda r:(r['date'],r['profile'],r['method'],r['seed']));write_csv(out/'dynamic.csv',collected)
     budget_rows=[]
     for item in plan['inputs']:
@@ -124,7 +130,7 @@ def summarize(out,data,budget):
                 statistics.append(dict(profile=profile,comparator=comparator,metric=metric,
                     **paired_interval([np.mean(dates[d]) for d in sorted(dates)])))
     write_csv(out/'paired_statistics.csv',statistics)
-    lines=['# 跨日期与公平预算研究','', '750个动态案例逐例独立核验；1650次求解最终方案、功率、资源及预算计数独立重算。',
+    lines=['# 跨日期与公平预算研究','', '750个动态案例逐例独立核验；1650次求解最终方案、功率、资源及预算计数独立重算。所有研究配置packing.cap=1，迁移触发阈值仍为.9；不与原矩阵cap=.9冒充同配置对比。',
         '', '统计单位为日期：先在同日期同负载下平均5个配对种子差值，再对10个日期进行10000次固定种子bootstrap。95%区间为探索性逐项区间，未作多重比较校正；相邻日期可能相关，不能视为随机抽取总体的证明。',
         '', '差值=BFD-GA−比较方法。能耗须与未交付率、每十亿MI能耗共同解释。人工低载/波动场景不是新增独立日期，也不等于作者原始工作负载。',
         '', '公平预算统一评价服务器+UPS总功率；BFD-GA仍有固定分组搜索空间差异。评估次数只计候选目标评分，最终校验/预处理另计耗时。时间限制是完整种群检查点软预算，初始化和预处理不可抢占，必须同时查看solve_ns与overrun_ns；不能宣称严格等运行时间。单次预热、固定随机方法顺序降低但不能消除JIT与顺序影响。',

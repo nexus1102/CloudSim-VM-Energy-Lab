@@ -8,8 +8,12 @@ from research_statistics import paired_interval
 root=Path(tempfile.mkdtemp(prefix='study-tests-'))/'study'
 prepare(root)
 plan=json.loads((root/'plan.json').read_text(encoding='utf-8'))
+assert all('packing.cap=1\n' in (root/r).read_text(encoding='utf-8') for r in plan['config_hashes'])
 assert len(plan['cases'])==750 and len(plan['inputs'])==30
 assert len({r['source_sha256'] for r in plan['inputs']})==10
+for item in plan['inputs']:
+    data=np.loadtxt(root/item['path'],delimiter=',')
+    assert max(data[:,0]*np.resize([1,.8,.4,.2],len(data)))<=1
 config=root/'configs/20110303_observed_101.properties'
 output=root/'budget.csv'
 subprocess.run([sys.argv[1] if len(sys.argv)>1 else 'java','-cp','bin;lib/*','repro.ResearchBudgetBenchmark',str(config),str(output)],check=True)
