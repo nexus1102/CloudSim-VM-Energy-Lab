@@ -26,7 +26,7 @@ jobs:
           python -m venv 平台/.venv
           & ./平台/.venv/Scripts/python.exe -m pip install -r 平台/requirements-lock.txt
       - name: Portable acceptance
-        shell: powershell
+        shell: pwsh
         run: |
           $env:RESEARCH_JAVA_HOME = $env:JAVA_HOME
           $env:RESEARCH_PYTHON = (Resolve-Path ./平台/.venv/Scripts/python.exe).Path
