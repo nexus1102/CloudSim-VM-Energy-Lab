@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-10",
+  "timezone": "Asia/Hong_Kong",
+  "status": "PASS_WITH_DOCUMENTED_SCOPE",
+  "validated_code_commit": "e99b19a0292f6e618816d7eab23338db3024d816",
+  "git_name": "yuandingshan",
+  "git_email": "yuandingshan1102@stu.xjtu.edu.cn",
+  "protected_baseline_files": 377,
+  "classified_java_sources": 31,
+  "placement_behavior_cases": 240,
+  "same_seed_metrics_per_method": 14,
+  "full_matrix_rerun": false,
+  "historical_reports_modified": false,
+  "global_pip_check": "Unrelated pre-existing missing dependencies; see final audit",
+  "code_sha256": {
+    "平台/build.ps1": "077d656ae7defcd686e1fb5f17464417e1174a3e32df32f0638e206b49a3557d",
+    "平台/run_research_platform.ps1": "027caec6bef6b3f9ab350fccf8e85a97da85713c32416feade630711ccd544c3",
+    "平台/runtime.ps1": "eb02f53f803f4568ce8dd80e712a44223d643567a8a11660beb4505edc2797a7",
+    "平台/src/repro/ResearchPlacement.java": "f5290a9def8da41215e74492c10d50da43bef8390b4a396dbf16a211eb2e98e4",
+    "平台/src/repro/PlacementOperators.java": "09af2c0424acb202e800a626315c6b030047a4b8b64f71f77d49bf4cfb0e5b16",
+    "平台/src/repro/ResearchExperiments.java": "5d53c9e20bffe0e2531b588612c5a6e3d6938b1626b1668a8ad38f9dd970d660",
+    "平台/tools/package_ga_fix_v10.py": "e3a645fee7a14acfb58c8e5303bc213e973f7a8bdc66281d8666f65e7151c3d9",
+    "平台/research_platform/config/default.properties": "5a73054ff53f5bbf8f5c504ddc5de83ae2ee9c8f7d8896418df53f5b13902bc7",
+    "平台/requirements-lock.txt": "55997703b7c24c757b3ef80fcfaf2222f02fae9f291a4e8e5bc787b752f91d07"
+  }
+}
